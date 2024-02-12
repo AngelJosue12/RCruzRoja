@@ -228,7 +228,7 @@ export const navLinks =[
   
 
   import va1 from '../assets/img/P5.png'
-  import va2 from '../assets/img/P6.png'
+  import va2 from '../assets/img/p6.png'
   import va3 from '../assets/img/p7.png'
   import va4 from '../assets/img/p8.png'
   import va5 from '../assets/img/p10.png'
