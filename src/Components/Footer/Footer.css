@@ -1,0 +1,40 @@
+footer{
+    padding-top: 100px;
+    background: var(--color-bg-4);
+    padding-bottom: 0;
+}
+.footer-container h4{  
+    color: var(--color-dark-Ex) !important;
+    margin-bottom: 22px;
+}
+.footer-container a{  
+    color: var(--color-dark-Ex) !important;
+}
+.footer-container{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 40px;
+}
+.param-links li{
+     margin-top: 10px;
+}
+.param-links li a{
+    text-transform: uppercase;
+    font-size: 10px;
+    transition: var(--transition);
+}
+/*...................................Media Screen 1024px................................*/
+@media (max-width: 1024px){ 
+    .footer-container{
+        grid-template-columns: repeat(2,1fr);
+        text-align: center;
+    }  
+}
+
+/*...................................Media Screen 600px................................*/
+@media (max-width: 600px){ 
+    .footer-container{
+        grid-template-columns: repeat(1,1fr);
+ 
+    }  
+}
