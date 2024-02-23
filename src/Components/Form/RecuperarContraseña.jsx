@@ -10,8 +10,8 @@ import { FaLinkedinIn } from "react-icons/fa";
 import { FcSms } from "react-icons/fc";
 import { message } from 'antd';
 import MultiForm from '../MultiForm/MultiForm';
-import Stepper from '../multiForm/Stepper';
-import StepperControl from '../multiForm/StepperControl';
+import Stepper from '../MultiForm/Stepper';
+import StepperControl from '../MultiForm/StepperControl';
 
 
 import '@tailwindcss/forms'
