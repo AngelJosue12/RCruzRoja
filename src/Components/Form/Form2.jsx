@@ -5,8 +5,8 @@ import LoginImg from '../../assets/img/principal.png'
 import LoginImg2 from '../../assets/img/logo.png'
 import ReCAPTCHA from "react-google-recaptcha";
 
-import { useState, useRef } from 'react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+
+import { useState, useRef, useEffect } from 'react'
 import { Switch } from '@headlessui/react'
 import { message } from 'antd'
 function classNames(...classes) {
@@ -18,12 +18,10 @@ import { FaGithub } from "react-icons/fa6";
 import { FaLinkedinIn } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import Login from '../../Pages/User/Login/Login'
 
 export default function Form2() {
 
 
-  const [messageApi, contextHolder] = message.useMessage();
 
   const navigate = useNavigate();
   const [agreed, setAgreed] = useState(true)
@@ -37,7 +35,10 @@ export default function Form2() {
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [telefono, setTelefono] = useState('');
-  const [fechaNac, setFechaNac] = useState('');
+
+
+  ////btn habilitar o no 
+  const [buttonDisabled, setButtonDisabled] = useState(true);
   
   ///mensajes de error
   const [emailError, setEmailError] = useState('');
@@ -47,60 +48,108 @@ export default function Form2() {
   const [nombreError, setNombreError] = useState('');
   const [apellidoMError, setApellidoMError] = useState('');
   const [apellidoPError, setApellidoPError] = useState('');
-  const [fechaError, setFechaError] = useState('');
   const captcha = useRef(null); 
 
+  ////////// VALIDACION DE QUE SI EXISTE EL CORREO Y TELEFONO 
+  const validateData = async (email, telefono) => {
+    const emailOptions = { method: 'GET' };
+    const telefonoOptions = { method: 'GET' };
   
-    const handleSubmit = (event) => {
-      event.preventDefault();
+    try {
+      // Validar el correo electrónico
+      const emailResponse = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=ad80009a6a4d42bb85961c91473598db&email=${email}`, emailOptions);
+      const emailData = await emailResponse.json();
+  
+      const telefonoConCodigoPais = `52${telefono}`;
+      // Validar el número de teléfono
+      const telefonoResponse = await fetch(`https://phonevalidation.abstractapi.com/v1/?api_key=26001135086c4e8e8dc7479bbaa28d01&phone=${telefonoConCodigoPais}`, telefonoOptions);
+      const telefonoData = await telefonoResponse.json();
+  
+      if(emailData.deliverability !== "DELIVERABLE" && !telefonoData.valid){
+        message.warning('El correo electrónico y Telefono proporcionado no es válido, introdusca datos reales y existente');
+        return false;
+      } else if(emailData.deliverability == "UNDELIVERABLE" && telefonoData.valid) {
+        message.warning('El correo electrónico proporcionado no es válido, introdusca uno real existente');
+        return false;
+      }else if (!telefonoData.valid && emailData.deliverability == "DELIVERABLE") {
+        message.warning('El número de teléfono proporcionado no es válido, introdusca uno real existente');
+        return false;
+      }
+  
+      // Si ambos son válidos, retornar verdadero
+      message.success('Datos validados correctamente');
+      return true;
+    } catch (error) {
+      console.error('Error al validar los datos:', error);
+      return false;
+    }
+  };
 
 
-      const captchaValue = captcha.current.getValue();
 
-      if (!captchaValue) {
-        message.error('Por favor, realiza el captcha');
+  useEffect(() => {
+    // Verificar si todos los campos están llenos y se han aceptado los términos y condiciones
+    const allFieldsFilled = nombre && ApellidoP && ApellidoM && email && password && password2 && telefono;
+    const allAgreed = agreed && agreed2;
+    const captchaValue = captcha.current.getValue();
+
+    // Actualizar el estado del botón de registro
+    setButtonDisabled(!allFieldsFilled || !allAgreed || !captchaValue);
+  }, [nombre, ApellidoP, ApellidoM, email, password, password2, telefono, agreed, agreed2]);
+
+
+
+
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  
+    const captchaValue = captcha.current.getValue();
+  
+    if (!captchaValue) {
+      message.error('Por favor, realiza el captcha');
+      return;
+    }
+  
+    const data = new FormData();
+    data.append("Nombre", nombre);
+    data.append("ApellidoPaterno", ApellidoP);
+    data.append("ApellidoMaterno", ApellidoM);
+    data.append("Correo", email);
+    data.append("Telefono", telefono);
+    data.append("Contrasena", password);
+    
+    const formData = new FormData();
+    formData.append("Correo", email);
+  
+    // Validar campos antes de enviar el formulario
+    if (validateEmail(email)==true && validatePassword(password)==true && validatePassword2(password2) && validateApellidoM(ApellidoM)==true && validateApellidoP(ApellidoP)==true && validateNombre(nombre)==true && validateTelefono(telefono)==true &&  !agreed || !agreed2 ) {
+      const telefonoValido = validateTelefono(telefono);
+  
+      // Verificar si hay algún error en el campo de teléfono
+      if (!telefonoValido) {
+        // Si el teléfono no es válido, detener el envío del formulario
         return;
       }
-
-
-      const data = new FormData();
-      data.append("Nombre", nombre);
-      data.append("ApellidoPaterno", ApellidoP);
-      data.append("ApellidoMaterno", ApellidoM);
-      data.append("Correo", email);
-      data.append("Telefono", telefono);
-      data.append("Contrasena", password);
-      data.append("FechaNacimiento", fechaNac);
-      
-      const formData = new FormData();
-      formData.append("Correo", email);
-      
   
-      // Validar campos antes de enviar el formulario
-      if (validateEmail(email)==true && validatePassword(password)==true && validatePassword2(password2) && validateApellidoM(ApellidoM)==true && validateApellidoP(ApellidoP)==true && validateNombre(nombre)==true && validateTelefono(telefono)==true && validateFecha(fechaNac)==true && !agreed || !agreed2 ) {
-        
-        const telefonoValido = validateTelefono(telefono);
-
-        // Verificar si hay algún error en el campo de teléfono
-        if (!telefonoValido) {
-          // Si el teléfono no es válido, detener el envío del formulario
-          return;
+      fetch(
+        "http://localhost:3000/user/" + email,
+        {
+          method: "POST",
+          credentials: 'include',
+          body: formData,
         }
-
-        fetch(
-          "http://localhost:3000/user/" +
-            email,
-          {
-            method: "POST",
-            credentials: 'include',
-            body: formData,
-          }
-        )
-          .then((res) => res.json())
-          .then((result) => {
-            if(result.mensaje === 'Este correo ya está registrado'){
-              message.warning('Este correo ya esta registrado');
-            }else{
+      )
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.mensaje === 'Este correo ya está registrado') {
+          message.warning('Este correo ya está registrado');
+        } else {
+          message.loading('Validando datos');
+  
+          validateData(email, telefono)
+          .then((valid) => {
+            if (valid) {
               fetch(
                 "http://localhost:3000/user",
                 {
@@ -115,32 +164,37 @@ export default function Form2() {
                     apellido_Materno: ApellidoM,
                     correo: email,
                     telefono: telefono,
-                    contraseña: password,
-                    fecha_Nacimiento: fechaNac,
+                    contraseña: password
                   }),
                 }
               )
               .then((res) => res.json())
               .then((result) => {
-                message.loading('Cargando', 2);
                 setTimeout(() => {
                   message.success('Usuario registrado exitosamente', 2);
                   navigate('/Login');
                 }, 2000);
               });
+            } else {
+              // Mostrar mensaje de error si la validación falla
+              console.log('Datos no válidos, revise su correo electrónico y número de teléfono');
             }
-          });  
-        } else {
-          message.info('Por favor lea y acepte nuestros terminos y condiciones y politicas de privacidad');
+          })
+          .catch((error) => {
+            console.error('Error al validar los datos:', error);
+          });
         }
-    };
+      })
+      .catch((error) => {
+        console.error('Error al verificar si el correo está registrado:', error);
+      });
+    } else {
+      message.info('Por favor lea y acepte nuestros términos y condiciones y políticas de privacidad');
+    }
+  };
+  
 
-
-    const [isChecked, setIsChecked] = useState(false);
-
-    const handleCheckboxChange = () => {
-      setIsChecked(!isChecked);
-    };
+   
     //validaciones jsjsjjs
     const validateNombre =(nombre)=>{
       if(nombre==''){
@@ -301,25 +355,6 @@ export default function Form2() {
     };
     
 
-    const validateFecha=(fechaNac)=>{
-      const fechaLimiteInferior = new Date('2002-01-01');
-      const fechaActual = new Date();
-
-      const fechaIngresada = new Date(fechaNac);
-      if(fechaNac==('')){
-        setFechaError('no puede estar vacio')
-        return false;
-      }else if (fechaIngresada < fechaLimiteInferior || fechaIngresada > fechaActual){
-        setFechaError('La fecha no es valida');
-        return false;
-      }else{
-        setFechaError('')
-        return true;
-
-      }
-    };
-
-
     const handleChangeCaptcha = () => {
       const captchaValue = captcha.current.getValue();
       if (captchaValue) {
@@ -352,12 +387,13 @@ export default function Form2() {
                 </a>
               </div>
     
-              <span>Rellena los Campos</span>
+              <span>Rellene los Campos con sus datos reales</span>
+          
                 
               <div className="border-b border-gray-900/10 pb-12">
 
 <div className="mt-1 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-<div className="sm:col-span-4">
+<div className="sm:col-span-3">
     <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Nombre</label>
     <div className="mt-2">
       <input  id="nombre"
@@ -398,36 +434,8 @@ export default function Form2() {
     </div>
   </div>
 
-  <div className="sm:col-span-3">
-    <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Correo</label>
-    <div className="mt-2">
-      <input  required
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onBlur={() => validateEmail(email)}
-            type="email" autoComplete="email" className=" {emailError ? 'input-error' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-            {emailError && <p className="error-message">{emailError}</p>}
-    </div>
-  </div>
 
   <div className="sm:col-span-3">
-    <label htmlFor="date" className="block text-sm font-medium leading-6 text-gray-900">Fecha de Nacimiento</label>
-    <div className="mt-2">
-      <input  type="date"
-            id="fecha"
-            name="fecha"
-            required
-            value={fechaNac}
-            onChange={(e) => setFechaNac(e.target.value)}
-            onBlur={() => validateFecha(fechaNac)}
-            min="10" max="100" step="1"  className="{fechaError ? 'input-error' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-    </div>
-    {fechaError && <p className="error-message">{fechaError}</p>}
-  </div>
-
-  <div className="sm:col-span-4">
     <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Telefono</label>
     <div className="mt-2">
     <input  
@@ -443,8 +451,19 @@ export default function Form2() {
     </div>
   </div>
 
-
-  
+  <div className="sm:col-span-6">
+    <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Correo</label>
+    <div className="mt-2">
+      <input  required
+            id="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onBlur={() => validateEmail(email)}
+            type="email" autoComplete="email" className=" {emailError ? 'input-error' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+            {emailError && <p className="error-message">{emailError}</p>}
+    </div>
+  </div>
 
   <div className="sm:col-span-3">
     <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">Contraseña</label>
@@ -475,6 +494,18 @@ export default function Form2() {
             {passwordError2 && <p className="error-message">{passwordError2}</p>}
     </div>
   </div>
+ 
+
+
+
+
+
+ 
+
+
+  
+
+ 
   
 
 </div>
@@ -489,6 +520,8 @@ export default function Form2() {
                </div>
 
 <br />
+<span>Por favor Lea y Acepte nuestros terminos y condiciones</span>
+<span>para poder crear su cuenta</span>
    
 <Switch.Group as="div" className="flex gap-x-4 sm:col-span-2">
             <div className="flex h-6 items-center">
@@ -548,8 +581,11 @@ export default function Form2() {
               </a>
             </Switch.Label>
           </Switch.Group>
-              <button className='button'type="submit" >Registrarse</button>
-              <button className='flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out transform py-4 rounded-xl text-gray-700 font-semibold text-lg border-2 border-gray-100 btn-google'>
+        
+
+          <button className='button' type="submit">Registrarse</button>
+
+              <button type='button' className='flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out transform py-4 rounded-xl text-gray-700 font-semibold text-lg border-2 border-gray-100 btn-google'>
              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M5.26644 9.76453C6.19903 6.93863 8.85469 4.90909 12.0002 4.90909C13.6912 4.90909 15.2184 5.50909 16.4184 6.49091L19.9093 3C17.7821 1.14545 15.0548 0 12.0002 0C7.27031 0 3.19799 2.6983 1.24023 6.65002L5.26644 9.76453Z" fill="#EA4335"/>
                                 <path d="M16.0406 18.0142C14.9508 18.718 13.5659 19.0926 11.9998 19.0926C8.86633 19.0926 6.21896 17.0785 5.27682 14.2695L1.2373 17.3366C3.19263 21.2953 7.26484 24.0017 11.9998 24.0017C14.9327 24.0017 17.7352 22.959 19.834 21.0012L16.0406 18.0142Z" fill="#34A853"/>

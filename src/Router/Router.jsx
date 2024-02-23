@@ -14,6 +14,7 @@ import Token from '../Components/Form/Token'
 import Restablece from '../Components/Form/Restablece'
 import Terminos from '../Pages/Terminos y Politicas/Terminos'
 import Politicas from '../Pages/Terminos y Politicas/Politicas'
+import MultiForm from '../Components/MultiForm/MultiForm'
 //import components.....
  import Nav from '../Components/Nav/Nav'
  import Footer from '../Components/Footer/Footer'

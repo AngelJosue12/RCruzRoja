@@ -3,17 +3,12 @@
 
 
 .container4{
-    margin: 75px;
-    background-color: #fff;
-    border-radius: 30px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-    position: relative;
-    overflow: hidden;
-    width: 788px;
-    max-width: 300%;
-    min-height: 460px;
-    margin-left: 340px;
-    margin-top: 20px;
+    align-content: center ;
+    align-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 
