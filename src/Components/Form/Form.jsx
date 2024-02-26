@@ -43,7 +43,7 @@ export default function Form() {
         contraseña: password
       };
   
-      fetch("http://localhost:3000/user/authenticate", {
+      fetch("https://api-rest-cpil9onml-ah5318740-gmailcom.vercel.app/api/user/authenticate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -58,7 +58,9 @@ export default function Form() {
               message.success('Autentificación Exitosa', 2);
               navigate('/');
             }, 2000);
-          } else {
+          }  else if (result.mensaje === "Este correo no coincide con ningún correo registrado") {
+            message.error('Este correo no coincide con ningún correo registrado');
+          }else{
             // Autenticación fallida
             if (result.mensaje === "Tu cuenta está bloqueada") {
               message.error('Tu cuenta está bloqueada. No puedes iniciar sesión.');
@@ -88,7 +90,7 @@ export default function Form() {
     };
   
     fetch(
-      `http://localhost:3000/userCuenta/${encodeURIComponent(email)}`,
+      `https://api-rest-cpil9onml-ah5318740-gmailcom.vercel.app/api/userCuenta/${encodeURIComponent(email)}`,
       {
         method: "PUT",
         headers: {
@@ -161,7 +163,7 @@ export default function Form() {
       correo: correo
     };
   
-    fetch("http://localhost:3000/notiCorreoCuentaBloqueada/" + encodeURIComponent(correo), {
+    fetch("https://api-rest-cpil9onml-ah5318740-gmailcom.vercel.app/api/notiCorreoCuentaBloqueada/" + encodeURIComponent(correo), {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -255,7 +257,7 @@ export default function Form() {
           <div className='cont-remen'>
             <ReCAPTCHA
               ref={captcha}
-              sitekey="6Le7_38pAAAAAGL9nCevqF8KzHl6qzULlBArgfMb"
+              sitekey="6LfXgm0pAAAAAA6yN5NyGT_RfPXZ_NLXu1eNoaQf"
               onChange={handleChangeCaptcha}
             />
           </div>
