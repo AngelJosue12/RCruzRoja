@@ -43,7 +43,7 @@ export default function Form() {
         contraseña: password
       };
   
-      fetch("http://localhost:3000/user/authenticate", {
+      fetch("https://api-rest-1r1qsww3r-ah5318740-gmailcom.vercel.app/user/authenticate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -90,7 +90,7 @@ export default function Form() {
     };
   
     fetch(
-      `http://localhost:3000/userCuenta/${encodeURIComponent(email)}`,
+      `https://api-rest-1r1qsww3r-ah5318740-gmailcom.vercel.app/userCuenta/${encodeURIComponent(email)}`,
       {
         method: "PUT",
         headers: {
@@ -163,7 +163,7 @@ export default function Form() {
       correo: correo
     };
   
-    fetch("http://localhost:3000/notiCorreoCuentaBloqueada/" + encodeURIComponent(correo), {
+    fetch("https://api-rest-1r1qsww3r-ah5318740-gmailcom.vercel.app/notiCorreoCuentaBloqueada/" + encodeURIComponent(correo), {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
