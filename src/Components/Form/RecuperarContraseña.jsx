@@ -9,8 +9,8 @@ import { FaGithub } from "react-icons/fa6";
 import { FaLinkedinIn } from "react-icons/fa";
 import { FcSms } from "react-icons/fc";
 import { message } from 'antd';
+import Stepper from '../MultiForm/Stepper';
 import StepperControl from '../MultiForm/StepperControl';
-import Stepper from '../MultiForm/Stepper'
 
 
 import '@tailwindcss/forms'
