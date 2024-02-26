@@ -4,6 +4,7 @@ import '@tailwindcss/forms'
 import LoginImg from '../../assets/img/principal.png'
 import LoginImg2 from '../../assets/img/logo.png'
 import ReCAPTCHA from "react-google-recaptcha";
+import { NivelSeguridad } from '../NivelSeguridad/NivelSeguridad'
 
 
 import { useState, useRef, useEffect } from 'react'
@@ -16,6 +17,8 @@ function classNames(...classes) {
 import { FaFacebookF } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa6";
 import { FaLinkedinIn } from "react-icons/fa";
+import { IoEyeSharp } from "react-icons/io5";
+import { FaEyeSlash } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
@@ -39,7 +42,19 @@ export default function Form2() {
 
   ////btn habilitar o no 
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  
+
+
+  /// mostrar o ocultar la contraseña 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+  const togglePasswordVisibility2 = () => {
+    setShowPassword2(!showPassword2);
+  };
+
   ///mensajes de error
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -48,7 +63,25 @@ export default function Form2() {
   const [nombreError, setNombreError] = useState('');
   const [apellidoMError, setApellidoMError] = useState('');
   const [apellidoPError, setApellidoPError] = useState('');
+
+
+  ///errores adaptacion
+  const [errorPresent, setErrorPresent] = useState(false);
+
+  useEffect(() => {
+    // Calcula si hay algún mensaje de error presente
+    const anyError = Boolean(
+      nombreError || apellidoPError || apellidoMError || emailError || passwordError || passwordError2 || telefonoError
+    );
+    // Actualiza el estado errorPresent
+    setErrorPresent(anyError);
+  }, [nombreError, apellidoPError, apellidoMError, emailError, passwordError, passwordError2, telefonoError]);
+
+  const containerClass = `container3 ${errorPresent ? 'error-present' : ''}`;
+
   const captcha = useRef(null); 
+
+
 
   ////////// VALIDACION DE QUE SI EXISTE EL CORREO Y TELEFONO 
   const validateData = async (email, telefono) => {
@@ -65,14 +98,15 @@ export default function Form2() {
       const telefonoResponse = await fetch(`https://phonevalidation.abstractapi.com/v1/?api_key=26001135086c4e8e8dc7479bbaa28d01&phone=${telefonoConCodigoPais}`, telefonoOptions);
       const telefonoData = await telefonoResponse.json();
   
-      if(emailData.deliverability !== "DELIVERABLE" && !telefonoData.valid){
-        message.warning('El correo electrónico y Telefono proporcionado no es válido, introdusca datos reales y existente');
-        return false;
-      } else if(emailData.deliverability == "UNDELIVERABLE" && telefonoData.valid) {
-        message.warning('El correo electrónico proporcionado no es válido, introdusca uno real existente');
-        return false;
-      }else if (!telefonoData.valid && emailData.deliverability == "DELIVERABLE") {
-        message.warning('El número de teléfono proporcionado no es válido, introdusca uno real existente');
+      if (emailData.deliverability !== "DELIVERABLE" || !telefonoData.valid) {
+
+        if(emailData.deliverability == "UNDELIVERABLE" && telefonoData.valid == false){
+          message.warning('El correo electrónico y Teléfono proporcionado no son válidos, introduzca datos reales y existentes');
+        } else if(emailData.deliverability == "UNDELIVERABLE" && telefonoData.valid == true) {
+          message.warning('El correo electrónico proporcionado no es válido, introduzca uno real existente');
+        } else if (telefonoData.valid == false && emailData.deliverability == "DELIVERABLE") {
+          message.warning('El número de teléfono proporcionado no es válido, introduzca uno real existente');
+        }
         return false;
       }
   
@@ -84,13 +118,16 @@ export default function Form2() {
       return false;
     }
   };
+  
+  
+  
 
 
 
   useEffect(() => {
     // Verificar si todos los campos están llenos y se han aceptado los términos y condiciones
     const allFieldsFilled = nombre && ApellidoP && ApellidoM && email && password && password2 && telefono;
-    const allAgreed = agreed && agreed2;
+    const allAgreed = !agreed && !agreed2;
     const captchaValue = captcha.current.getValue();
 
     // Actualizar el estado del botón de registro
@@ -307,6 +344,7 @@ export default function Form2() {
       return passed;
     }
     
+    
   
     const validatePassword = (password) => {
       if(password==''){
@@ -329,6 +367,8 @@ export default function Form2() {
         }
       }
     };
+
+
     const validatePassword2=(password2)=>{
       if(password2==password){
         setPasswordError2('')
@@ -366,7 +406,7 @@ export default function Form2() {
 
 
     return (
-        <div className="container3" id="container">
+        <div className={containerClass} id="container">
           
     
           <div className="form-container sign-in">
@@ -403,7 +443,13 @@ export default function Form2() {
             onBlur={() => validateNombre(nombre)}
             required
            type="text" autoComplete="nombre" className=" {nombreError ? 'input-error' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-           {nombreError && <p className="error-message">{nombreError}</p>}
+           {nombreError && (
+            <div className="error-container">
+              <p className="error-message">{nombreError}</p>
+            </div>
+          )}
+
+           
     </div>
   </div>
   <div className="sm:col-span-3">
@@ -465,37 +511,71 @@ export default function Form2() {
     </div>
   </div>
 
+
+
   <div className="sm:col-span-3">
-    <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">Contraseña</label>
-    <div className="mt-2">
-      <input type="password"
+        <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+          Contraseña
+        </label>
+        <div className="mt-2 relative rounded-md shadow-sm">
+          <input 
+            type={showPassword ? 'text' : 'password'}
             required
             id="password"
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onBlur={() => validatePassword(password)}
-            autoComplete="password" className="{passwordError ? 'input-error' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-             {passwordError && <p className="error-message">{passwordError}</p>}
-    </div>
-  </div>
+            autoComplete="password" 
+            className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${passwordError ? 'input-error' : ''}`}
+          />
+          <button
+            type="button"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+            onClick={togglePasswordVisibility}
+          >
+            {showPassword ? (
+              <FaEyeSlash className="h-5 w-5" aria-hidden="true" />
+            ) : (
+              <IoEyeSharp className="h-5 w-5" aria-hidden="true" />
+            )}
+          </button>
+        </div>
+        {passwordError && <p className="error-message">{passwordError}</p>}
+        <NivelSeguridad password={password}/>
+      </div>
 
-  <div className="sm:col-span-3">
-    <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">Confirmar Contraseña</label>
-    <div className="mt-2">
-      <input type="password"
+      <div className="sm:col-span-3">
+        <label htmlFor="password2" className="block text-sm font-medium leading-6 text-gray-900">
+          Confirmar Contraseña
+        </label>
+        <div className="mt-2 relative rounded-md shadow-sm">
+          <input 
+            type={showPassword2 ? 'text' : 'password'}
+            required
             id="password2"
             name="password2"
             value={password2}
-            required
             onChange={(e) => setPassword2(e.target.value)}
             onBlur={() => validatePassword2(password2)}
-            autoComplete="password2" className="{passwordError2 ? 'input-error' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-            {passwordError2 && <p className="error-message">{passwordError2}</p>}
-    </div>
-  </div>
+            autoComplete="password2" 
+            className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${passwordError2 ? 'input-error' : ''}`}
+          />
+          <button
+            type="button"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+            onClick={togglePasswordVisibility2}
+          >
+            {showPassword2 ? (
+              <FaEyeSlash className="h-5 w-5" aria-hidden="true" />
+            ) : (
+              <IoEyeSharp className="h-5 w-5" aria-hidden="true" />
+            )}
+          </button>
+        </div>
+        {passwordError2 && <p className="error-message">{passwordError2}</p>}
+      </div>
  
-
 
 
 
@@ -514,7 +594,7 @@ export default function Form2() {
 <div className='cont-remen'>
                <ReCAPTCHA
                   ref={captcha}
-                  sitekey="6LfXgm0pAAAAAA6yN5NyGT_RfPXZ_NLXu1eNoaQf"
+                  sitekey="6Le7_38pAAAAAGL9nCevqF8KzHl6qzULlBArgfMb"
                   onChange={handleChangeCaptcha}
                 />
                </div>
@@ -582,8 +662,13 @@ export default function Form2() {
             </Switch.Label>
           </Switch.Group>
         
-
-          <button className='button' type="submit">Registrarse</button>
+          <button 
+          className={`button ${buttonDisabled ? 'button-disabled' : ''}`} 
+          type="submit" 
+          disabled={buttonDisabled}
+        >
+          Registrarse
+        </button>
 
               <button type='button' className='flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out transform py-4 rounded-xl text-gray-700 font-semibold text-lg border-2 border-gray-100 btn-google'>
              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

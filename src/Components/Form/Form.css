@@ -15,12 +15,14 @@
     margin-bottom: 60px;
     margin-top: 30px;
 }
-
+.container2.error-present {
+    min-height: 870px; /* Ajusta la altura según sea necesario */
+  }
 .container2 p{
     font-size: 14px;
     line-height: 20px;
     letter-spacing: 0.3px;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
 .container2 span{
@@ -34,7 +36,7 @@
     margin: 15px 0 10px;
 }
 
-.container2 button{
+.container2 .button2{
     background-color: var(--color-primary);
     color: #fff;
     font-size: 12px;
@@ -48,7 +50,36 @@
     cursor: pointer;
 }
 
-.container2 button.hidden{
+
+.container2 .verBoton{
+    left: 240px;
+    align-items: center;
+    position: absolute;
+    display: flex;
+}
+
+
+.container2 .button2.hidden{
+    background-color: transparent;
+    border-color: #000000;
+}
+
+
+.container2 .button{
+    background-color: var(--color-primary);
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 14px;
+    cursor: pointer;
+}
+
+.container2 .button.hidden{
     background-color: transparent;
     border-color: #000000;
 }
@@ -70,7 +101,7 @@
     padding: 10px 15px;
     font-size: 13px;
     border-radius: 8px;
-    width: 130%;
+    width: 150%;
     outline: none;
 }
 

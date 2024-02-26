@@ -14,7 +14,7 @@ import Token from '../Components/Form/Token'
 import Restablece from '../Components/Form/Restablece'
 import Terminos from '../Pages/Terminos y Politicas/Terminos'
 import Politicas from '../Pages/Terminos y Politicas/Politicas'
-import MultiForm from '../Components/MultiForm/MultiForm'
+import PoliCokkies from '../Pages/PoliticasCookies/PoliCokkies'
 //import components.....
  import Nav from '../Components/Nav/Nav'
  import Footer from '../Components/Footer/Footer'
@@ -38,6 +38,7 @@ export default function Router() {
         <Route path='Restablece' element={<Restablece/>}/>
         <Route path='Terminos' element={<Terminos/>}/>
         <Route path='Politicas' element={<Politicas/>}/>
+        <Route path='Cookies' element={<PoliCokkies/>}/>
     </Routes>
     <Contenido/>
     <Footer/>

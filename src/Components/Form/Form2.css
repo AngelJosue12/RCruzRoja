@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 
-
 .container3{
     margin: 75px;
     background-color: #fff;
@@ -14,6 +13,16 @@
     min-height: 1280px;
 }
 
+
+.button-disabled {
+    background-color: rgba(160, 159, 159, 0.5) !important; /* Gris transparente */
+
+  }
+
+.container3.error-present {
+    min-height: 1500px; /* Ajusta la altura según sea necesario */
+  }
+  
 .container3 p{
     font-size: 14px;
     line-height: 20px;
@@ -126,9 +135,7 @@
     border-color: red !important;
   }
   
-  .error-message {
-    color: red important; 
-  }
+
   .img-login2{
       position: absolute;
       width: 600px;
