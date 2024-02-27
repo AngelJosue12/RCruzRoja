@@ -170,7 +170,7 @@ export default function Form2() {
       }
   
       fetch(
-        "http://localhost:3000/user/" + email,
+        "https://api-rest-cr.vercel.app/user/" + email,
         {
           method: "POST",
           credentials: 'include',
@@ -188,7 +188,7 @@ export default function Form2() {
           .then((valid) => {
             if (valid) {
               fetch(
-                "http://localhost:3000/user",
+                "https://api-rest-cr.vercel.app/user",
                 {
                   method: "POST",
                   credentials: 'include',
