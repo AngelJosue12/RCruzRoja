@@ -44,6 +44,7 @@ export default function Form() {
       };
   
       fetch("https://api-rest-cr.vercel.app/user/authenticate", {
+
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -58,7 +59,9 @@ export default function Form() {
               message.success('Autentificación Exitosa', 2);
               navigate('/');
             }, 2000);
-          } else {
+          }  else if (result.mensaje === "Este correo no coincide con ningún correo registrado") {
+            message.error('Este correo no coincide con ningún correo registrado');
+          }else{
             // Autenticación fallida
             if (result.mensaje === "Tu cuenta está bloqueada") {
               message.error('Tu cuenta está bloqueada. No puedes iniciar sesión.');
@@ -89,6 +92,7 @@ export default function Form() {
   
     fetch(
       `https://api-rest-cr.vercel.app/userCuenta/${encodeURIComponent(email)}`,
+
       {
         method: "PUT",
         headers: {
