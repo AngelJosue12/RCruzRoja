@@ -5,7 +5,15 @@ import LoginImg from '../../assets/img/principal.png'
 import LoginImg2 from '../../assets/img/logo.png'
 import ReCAPTCHA from "react-google-recaptcha";
 import { NivelSeguridad } from '../NivelSeguridad/NivelSeguridad'
-
+import { useCountries } from 'use-react-countries'
+import {
+  Input,
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
+  Button,
+} from "@material-tailwind/react";
 
 import { useState, useRef, useEffect } from 'react'
 import { Switch } from '@headlessui/react'
@@ -25,7 +33,12 @@ import { useNavigate } from 'react-router-dom';
 export default function Form2() {
 
 
+  const { countries } = useCountries();
+  const [country, setCountry] = React.useState(0);
+  const { name, flags, countryCallingCode } = countries[country];
 
+
+  
   const navigate = useNavigate();
   const [agreed, setAgreed] = useState(true)
   const [agreed2, setAgreed2] = useState(true)
@@ -170,7 +183,7 @@ export default function Form2() {
       }
   
       fetch(
-        "https://api-rest-cr.vercel.app/user/" + email,
+        "http://localhost:3000/user/" + email,
         {
           method: "POST",
           credentials: 'include',
@@ -188,7 +201,7 @@ export default function Form2() {
           .then((valid) => {
             if (valid) {
               fetch(
-                "https://api-rest-cr.vercel.app/user",
+                "http://localhost:3000/user",
                 {
                   method: "POST",
                   credentials: 'include',
@@ -375,7 +388,7 @@ export default function Form2() {
         return true;  
 
       }else{
-        setPasswordError2('no son iguales las contraseñas')
+        setPasswordError2('No coinciden las contraseñas')
         return false;
       }
     };
@@ -383,10 +396,10 @@ export default function Form2() {
     const validateTelefono = (telefono) => {
       const telefonoRegex = /^[0-9]+$/;
       if (telefono === '') {
-        setTelefonoError('El campo de teléfono no puede estar vacío');
+        setTelefonoError('El campo no puede estar vacío');
         return false;
       } else if (!telefonoRegex.test(telefono)) {
-        setTelefonoError('El teléfono solo puede contener números');
+        setTelefonoError('Este campo solo puede contener números');
         return false;
       } else {
         setTelefonoError('');
@@ -411,7 +424,7 @@ export default function Form2() {
     
           <div className="form-container sign-in">
             <form onSubmit={handleSubmit}>
-              <h1 className='title-form'>Resgistro</h1>
+              <h2 className='title-form'>Resgistro</h2>
               <span>Registrate Con Diferentes Plataformas</span>
     
               <div className="social-icons">
@@ -432,7 +445,7 @@ export default function Form2() {
                 
               <div className="border-b border-gray-900/10 pb-12">
 
-<div className="mt-1 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+<div className="mt-1 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
 <div className="sm:col-span-3">
     <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Nombre</label>
     <div className="mt-2">
@@ -481,23 +494,27 @@ export default function Form2() {
   </div>
 
 
-  <div className="sm:col-span-3">
-    <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Telefono</label>
-    <div className="mt-2">
+  <div className="sm:col-span-3 md:col-span-3 relative">
+  <label htmlFor="telefono" className="block text-sm font-medium leading-6 text-gray-900">Telefono</label>
+  <div className="mt-2">
     <input  
-    type="tel"
-    id="telefono"
-    name="telefono"
-    value={telefono}
-    required
-    onChange={(e) => setTelefono(e.target.value)}
-    onBlur={() => validateTelefono(telefono)} // Aquí se llama a validateTelefono correctamente
-    className="{telefonoError ? 'input-error' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-    {telefonoError && <p className="error-message">{telefonoError}</p>}
-    </div>
+      type="tel"
+      id="telefono"
+      name="telefono"
+      value={telefono}
+      required
+      onChange={(e) => setTelefono(e.target.value)}
+      onBlur={() => validateTelefono(telefono)} // Aquí se llama a validateTelefono correctamente
+      className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${telefonoError ? 'input-error' : ''}`}
+    />
   </div>
+  {telefonoError && (
+    <p className="error-message absolute -mt-6 sm:-mt-6 text-xs text-red-500 left-0">{telefonoError}</p>
+  )}
+</div>
 
-  <div className="sm:col-span-6">
+
+  <div className="sm:col-span-5">
     <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Correo</label>
     <div className="mt-2">
       <input  required
@@ -513,37 +530,42 @@ export default function Form2() {
 
 
 
-  <div className="sm:col-span-3">
-        <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-          Contraseña
-        </label>
-        <div className="mt-2 relative rounded-md shadow-sm">
-          <input 
-            type={showPassword ? 'text' : 'password'}
-            required
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onBlur={() => validatePassword(password)}
-            autoComplete="password" 
-            className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${passwordError ? 'input-error' : ''}`}
-          />
-          <button
-            type="button"
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
-            onClick={togglePasswordVisibility}
-          >
-            {showPassword ? (
-              <FaEyeSlash className="h-5 w-5" aria-hidden="true" />
-            ) : (
-              <IoEyeSharp className="h-5 w-5" aria-hidden="true" />
-            )}
-          </button>
-        </div>
-        {passwordError && <p className="error-message">{passwordError}</p>}
-        <NivelSeguridad password={password}/>
-      </div>
+  <div className="sm:col-span-3 relative">
+  <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+    Contraseña
+  </label>
+  <div className="mt-2 relative rounded-md shadow-sm">
+    <input 
+      type={showPassword ? 'text' : 'password'}
+      required
+      id="password"
+      name="password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      onBlur={() => validatePassword(password)}
+      autoComplete="password" 
+      className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${passwordError ? 'input-error' : ''} ${passwordError ? 'input-error-padding' : ''}`}
+    />
+    <button
+      type="button"
+      className="absolute inset-y-0 right-0 pr flex items-center text-gray-400"
+      onClick={togglePasswordVisibility}
+    >
+      {showPassword ? (
+        <FaEyeSlash className="h-5 w-5" aria-hidden="true" />
+      ) : (
+        <IoEyeSharp className="h-5 w-5" aria-hidden="true" />
+      )}
+    </button>
+  </div> <NivelSeguridad password={password}/> <br />
+  {passwordError && (
+    <p className="error-message absolute -mt-6 text-xs text-red-500 left-0">{passwordError}</p>
+  )}
+
+</div>
+
+
+
 
       <div className="sm:col-span-3">
         <label htmlFor="password2" className="block text-sm font-medium leading-6 text-gray-900">
@@ -577,31 +599,18 @@ export default function Form2() {
       </div>
  
 
-
-
-
- 
-
-
-  
-
- 
-  
-
 </div>
 </div>
-<br /><br />
 <div className='cont-remen'>
                <ReCAPTCHA
                   ref={captcha}
-                  sitekey="6Le7_38pAAAAAGL9nCevqF8KzHl6qzULlBArgfMb"
+                  sitekey="6LfXgm0pAAAAAA6yN5NyGT_RfPXZ_NLXu1eNoaQf"
                   onChange={handleChangeCaptcha}
                 />
                </div>
 
 <br />
-<span>Por favor Lea y Acepte nuestros terminos y condiciones</span>
-<span>para poder crear su cuenta</span>
+<span>Por favor Lea y Acepte nuestros terminos y condiciones</span><br />
    
 <Switch.Group as="div" className="flex gap-x-4 sm:col-span-2">
             <div className="flex h-6 items-center">
@@ -681,7 +690,7 @@ export default function Form2() {
             
           </button>
           <div className='cont-remen2'>
-          <p className=''> Ya tienes una Cuenta,</p>
+          <p className='cuenta'> Ya tienes una Cuenta,</p>
           <Link to={'/Login'} >
           Inicia Sesion
           </Link>

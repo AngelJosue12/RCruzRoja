@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 // Components Imports.................................
 import Header from '../Components/Header/Header'
 import Brands from '../Components/Brands/Brands'
@@ -10,21 +10,24 @@ import LstestArticle from '../Components/LstestArticle/LstestArticle'
 import Blog from '../Components/Blog/Blog'
 import Ayuda from '../Components/Ayuda/Ayuda'
 import Valores from '../Components/Valores/Valores'
+import SwiperDemo from '../Components/Slider/Slider'
 
 export default function Home() {
+ 
   return (
     <>
     <Ayuda/>
   {/*  <Header/>
   <Brands/>
  
-  <Quote/> */}
- <Valores/>
+  <Quote/> 
+   <Valores/>*/}
+
+ <SwiperDemo/>
    {/*
     <BestSellingBook/>
   <PopularBooks/>
  */}
-    
     <Blog/>
     <LstestArticle/>
     </>

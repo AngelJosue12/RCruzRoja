@@ -36,8 +36,6 @@ export default function Ayuda() {
       <Swiper
       spaceBetween={50}
       slidesPerView={1}
-     
-     
       >
         {
           headerBooks2.map(({title, info, img, btnLink}, index)=>{
@@ -59,17 +57,7 @@ export default function Ayuda() {
             )
           })
         }
-        {/*...................Header pagination................
-        <div className="slider-button">
-          <div className="button-prev-slide slidebutton">
-            <GoArrowLeft/>
-          </div>
-          <div className="button-next-slide slidebutton">
-            <GoArrowRight/>
-          </div>
-        </div>
-        */}
-
+       
       </Swiper>
 
            {/*...................Header Shape................*/}

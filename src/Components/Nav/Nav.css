@@ -112,6 +112,7 @@ span .active{
         margin: 9px;
         font-size: 12px;
     }
+    
    
      /*...................NavLinks-Animation.................... */
      @keyframes navAni {
@@ -141,6 +142,9 @@ span .active{
     .nav-links li:nth-child(8){
         animation-delay: 1400ms;
     }
+    .nav-links li:nth-child(9){
+        animation-delay: 1600ms;
+    }
     .menu-button{
         display: flex;
         color: var(--color-dark);
@@ -168,6 +172,9 @@ span .active{
 span{
     margin: 5px;
     font-size: 12px;
+}
+.nombreAvatar{
+    margin-left: -10px !important;
 }
 }
 

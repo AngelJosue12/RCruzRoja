@@ -1,20 +1,40 @@
-import React from 'react' 
-import '@tailwindcss/forms'
+import React from 'react';
+import '@tailwindcss/forms';
 
-export default function StepperControl() {
+const StepperControl = ({ handleClick, currentStep, steps }) => {
   return (
-     
-    <div className='container flex justify-around mt-4 mb-8'>
-        {/*back button */}
-        < button className=" bg-red-500 text-white uppercase py-2 px-4 rounded-xl font-semibold cursor-pointer border-2 border-slate-00 hover:bg-slate-700 hover:text-white transition duration-2oo ease-in-out">
-            atras
-            </button>
+    <div className="container flex justify-between mt-4 mb-8">
+      {currentStep !== 1 && currentStep !== steps.length && (
+        <button
+          onClick={() => handleClick()}
+          className="bg-red-600 text-white uppercase py-2 px-4 rounded-md font-semibold cursor-pointer border border-transparent transition duration-200 ease-in-out"
+          style={{
+            fontSize: '12px',
+            padding: '8px 24px',
+            letterSpacing: '0.5px',
+            marginTop: '10px',
+          }}
+        >
+          Atrás
+        </button>
+      )}
 
-        {/*Next botton */}
-        < button className="bg-green-500 text-white uppercase py-2 px-4 rounded-xl font-semibold cursor-pointer hover:bg-slate-700 hover:text-white transition duration-2oo ease-in-out">
-            siguiente
-            </button>
+      {currentStep !== steps.length && (
+        <button
+          onClick={() => handleClick('Siguiente')}
+          className="bg-red-600 text-white uppercase py-2 px-4 rounded-md font-semibold cursor-pointer border border-transparent transition duration-200 ease-in-out"
+          style={{
+            fontSize: '12px',
+            padding: '8px 24px',
+            letterSpacing: '0.5px',
+            marginTop: '10px',
+          }}
+        >
+          {currentStep === steps.length - 1 ? 'Confirmar' : 'Siguiente'}
+        </button>
+      )}
     </div>
-  )
-}
- 
+  );
+};
+
+export default StepperControl;

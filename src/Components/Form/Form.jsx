@@ -6,12 +6,35 @@ import { FaFacebookF, FaGithub, FaLinkedinIn } from "react-icons/fa";
 import { IoEyeSharp } from "react-icons/io5";
 import { FaEyeSlash } from "react-icons/fa";
 import ReCAPTCHA from "react-google-recaptcha";
-
-import LoginImg from '../../assets/img/p3.png';
+import { useAuth } from '../Contexts/AuthContexts';
+import { useCookies } from 'react-cookie';
+import { jwtDecode } from 'jwt-decode';
+  import LoginImg from '../../assets/img/p3.png';
 import LoginImg2 from '../../assets/img/logo.png';
 import './Form.css';
 
 export default function Form() {
+
+
+  const { setIsAuthenticated } = useAuth();
+
+  function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // Verifica si la cookie actual comienza con el nombre proporcionado
+        if (cookie.startsWith(name + '=')) {
+            // Retorna el valor de la cookie
+            return cookie.substring(name.length + 1);
+        }
+    }
+    // Si no se encuentra la cookie, retorna null
+    return null;
+}
+
+
+
+
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,6 +43,7 @@ export default function Form() {
   const captcha = useRef(null);
   const [attemptCount, setAttemptCount] = useState(0);
   const maxAttempts = 4;
+  const encodedEmail = btoa(email);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -38,27 +62,56 @@ export default function Form() {
     }
   
     if (validateEmail(email) && validatePassword(password)) {
+      
       const requestBody = {
         correo: email,
         contraseña: password
       };
   
-      fetch("https://api-rest-cr.vercel.app/user/authenticate", {
-
+      fetch("http://localhost:3000/user/authenticate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
+        credentials: 'include'
       })
         .then(response => response.json())
         .then(result => {
           if (result.mensaje === "Autenticación exitosa") {
+
+
+            const token = getCookie('jwt');
+
+            let nombre; // Declarar la variable fuera de try
+            let Authenticated
+            if (token) {
+              try {
+                // Decodifica el token JWT
+                const decodedToken = jwtDecode(token);
+                nombre = decodedToken.nombre;
+                Authenticated =decodedToken.IsAuthenticated 
+              } catch (error) {
+                console.error('Error al decodificar el token JWT:', error);
+                // Maneja el error según sea necesario
+              }
+            } else {
+              console.error('No se encontró la cookie "jwt"');
+              // Maneja el caso en que no se encuentra la cookie según sea necesario
+            }
+            
             message.loading('Cargando', 2);
+            
             setTimeout(() => {
-              message.success('Autentificación Exitosa', 2);
+              if (nombre) { // Comprueba si nombre tiene un valor válido
+                message.success(`Autenticación exitosa. Bienvenido, ${nombre}`, 2);
+              } else {
+                message.success('Autenticación exitosa', 2);
+              }
               navigate('/');
+              setIsAuthenticated(Authenticated);
             }, 2000);
+            
           }  else if (result.mensaje === "Este correo no coincide con ningún correo registrado") {
             message.error('Este correo no coincide con ningún correo registrado');
           }else{
@@ -91,8 +144,7 @@ export default function Form() {
     };
   
     fetch(
-      `https://api-rest-cr.vercel.app/userCuenta/${encodeURIComponent(email)}`,
-
+      `http://localhost:3000/userCuenta/${encodeURIComponent(email)}`,
       {
         method: "PUT",
         headers: {
@@ -165,7 +217,7 @@ export default function Form() {
       correo: correo
     };
   
-    fetch("https://api-rest-cr.vercel.app/notiCorreoCuentaBloqueada/" + encodeURIComponent(correo), {
+    fetch("http://localhost:3000/notiCorreoCuentaBloqueada/" + encodeURIComponent(correo), {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -193,7 +245,7 @@ export default function Form() {
     <div className={containerClass} id="container">
       <div className="form-container sign-in">
         <form onSubmit={handleSubmit}>
-          <h2 className='title-form'>Inicio de Sesión</h2>
+          <h3 className='title-form'>Inicio de Sesión</h3>
           <div className="social-icons">
             <a href="#" className="icon">
               <i className="fa-brands fa-facebook-f"><FaFacebookF /></i>
@@ -221,9 +273,13 @@ export default function Form() {
                   autoComplete="email"
                   className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${emailError ? 'input-error' : ''}`} />
               </div>
-              {emailError && <p className="error-message">{emailError}</p>}
+              <div className="errores">
+              {emailError && <p className="error-message absolute  left-30">{emailError}</p>}
+              </div>
+
             </div>
           </div>
+
           <div className="mt-1 grid grid-cols-1 gap-x-1 gap-y-4 sm:grid-cols-6">
             <div className="sm:col-span-4">
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Contraseña</label>
@@ -248,36 +304,41 @@ export default function Form() {
                   )}
                 </button>
               </div>
-              {passwordError && <p className="error-message">{passwordError}</p>}
+             <div className="errores">
+             {passwordError && (
+                <p className="error-message absolute  left-30">{passwordError}</p>
+              )}
+             </div>
+        
             </div>
           </div>
-     {/* <div className='cont-remen'>
-    <input type="checkbox" id='remember' />
-    <label className='text-sm text-slate-700 grid grid-cols-1 gap-1 ms-8 center' htmlFor="remember">Recordarme por 30 días</label>
-</div> */}
-<br />
+
+
+          
+ 
           <div className='cont-remen'>
             <ReCAPTCHA
               ref={captcha}
-              sitekey="6Le7_38pAAAAAGL9nCevqF8KzHl6qzULlBArgfMb"
+              sitekey="6LfXgm0pAAAAAA6yN5NyGT_RfPXZ_NLXu1eNoaQf"
               onChange={handleChangeCaptcha}
             />
           </div>
-          <Link to={'/Recuperacion'}>
+          <Link to={`/Recuperacion?email=${(email)}`}>
             Olvidaste tu Contraseña?
           </Link>
           <button className='button2' type="submit" >Iniciar Sesión</button>
-          <button className='flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out transform py-4 rounded-xl text-gray-700 font-semibold text-lg border-2 border-gray-100 btn-google'>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5.26644 9.76453C6.19903 6.93863 8.85469 4.90909 12.0002 4.90909C13.6912 4.90909 15.2184 5.50909 16.4184 6.49091L19.9093 3C17.7821 1.14545 15.0548 0 12.0002 0C7.27031 0 3.19799 2.6983 1.24023 6.65002L5.26644 9.76453Z" fill="#EA4335" />
-              <path d="M16.0406 18.0142C14.9508 18.718 13.5659 19.0926 11.9998 19.0926C8.86633 19.0926 6.21896 17.0785 5.27682 14.2695L1.2373 17.3366C3.19263 21.2953 7.26484 24.0017 11.9998 24.0017C14.9327 24.0017 17.7352 22.959 19.834 21.0012L16.0406 18.0142Z" fill="#34A853" />
-              <path d="M19.8342 20.9978C22.0292 18.9503 23.4545 15.9019 23.4545 11.9982C23.4545 11.2891 23.3455 10.5255 23.1818 9.81641H12V14.4528H18.4364C18.1188 16.0119 17.2663 17.2194 16.0407 18.0108L19.8342 20.9978Z" fill="#4A90E2" />
-              <path d="M5.27698 14.2663C5.03833 13.5547 4.90909 12.7922 4.90909 11.9984C4.90909 11.2167 5.03444 10.4652 5.2662 9.76294L1.23999 6.64844C0.436587 8.25884 0 10.0738 0 11.9984C0 13.918 0.444781 15.7286 1.23746 17.3334L5.27698 14.2663Z" fill="#FBBC05" />
-            </svg>
-            Inicia Sesión con Google
+          <button type='button' className='flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out transform py-4 rounded-xl text-gray-700 font-semibold text-lg border-2 border-gray-100 btn-google'>
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.26644 9.76453C6.19903 6.93863 8.85469 4.90909 12.0002 4.90909C13.6912 4.90909 15.2184 5.50909 16.4184 6.49091L19.9093 3C17.7821 1.14545 15.0548 0 12.0002 0C7.27031 0 3.19799 2.6983 1.24023 6.65002L5.26644 9.76453Z" fill="#EA4335"/>
+                                <path d="M16.0406 18.0142C14.9508 18.718 13.5659 19.0926 11.9998 19.0926C8.86633 19.0926 6.21896 17.0785 5.27682 14.2695L1.2373 17.3366C3.19263 21.2953 7.26484 24.0017 11.9998 24.0017C14.9327 24.0017 17.7352 22.959 19.834 21.0012L16.0406 18.0142Z" fill="#34A853"/>
+                                <path d="M19.8342 20.9978C22.0292 18.9503 23.4545 15.9019 23.4545 11.9982C23.4545 11.2891 23.3455 10.5255 23.1818 9.81641H12V14.4528H18.4364C18.1188 16.0119 17.2663 17.2194 16.0407 18.0108L19.8342 20.9978Z" fill="#4A90E2"/>
+                                <path d="M5.27698 14.2663C5.03833 13.5547 4.90909 12.7922 4.90909 11.9984C4.90909 11.2167 5.03444 10.4652 5.2662 9.76294L1.23999 6.64844C0.436587 8.25884 0 10.0738 0 11.9984C0 13.918 0.444781 15.7286 1.23746 17.3334L5.27698 14.2663Z" fill="#FBBC05"/>
+                            </svg>
+            Iniciar Sesion con Google
+            
           </button>
           <div className='cont-remen2'>
-            <p className=''>¿No tienes una Cuenta?</p>
+            <p className='cuenta2'>¿No tienes una Cuenta?</p>
             <Link to={'/Registro'} >
               Regístrate
             </Link>

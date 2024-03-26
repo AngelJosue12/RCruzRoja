@@ -2,15 +2,17 @@
 
 
 .container3{
-    margin: 75px;
+    margin:25px;
     background-color: #fff;
     border-radius: 30px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
     position: relative;
     overflow: hidden;
-    width: 1100px;
+    width: 900px;
     max-width: 70%;
-    min-height: 1280px;
+    min-height: 1000px;
+    margin-bottom: 60px;
+    margin-top: 15px;
 }
 
 
@@ -20,23 +22,30 @@
   }
 
 .container3.error-present {
-    min-height: 1500px; /* Ajusta la altura según sea necesario */
+    min-height: 1080px;
   }
   
 .container3 p{
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 11px;
+    line-height: 10px;
     letter-spacing: 0.3px;
-    margin: 20px 0;
+    margin: 5px 0;
+}
+.cuenta{
+    font-size: 14px !important;
+    line-height: 10px !important ;
+    letter-spacing: 0.3px !important;
+    margin: 5px 0 !important;
 }
 
 .container3 span{
     font-size: 12px;
+    
 }
 
 .container3 a{
     color: #272727;
-    font-size: 13px;
+    font-size: 14px;
     text-decoration: none;
     margin: 15px 0 10px;
 }
@@ -66,18 +75,19 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 0 40px;
+    padding: 0 0;
     height: 100%;
+    margin-top: -6px;
 }
 
 .container3 input{
     background-color: #eee;
     border: none;
-    margin: 8px 0;
-    padding: 10px 15px;
-    font-size: 13px;
+    margin: 2px 0 ;
+    padding: 4px 12px;
+    font-size: 12px;
     border-radius: 8px;
-    width: 100%;
+    width: 110%;
     outline: none;
 }
 
@@ -95,7 +105,7 @@
 }
 
 .social-icons{
-    margin: 0px 0;
+    margin: 3px 0 !important;
 }
 
 .social-icons a{
@@ -104,7 +114,7 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    margin: 0 3px;
+    margin: 0 2px;
     width: 40px;
     height: 40px;
 }
@@ -120,6 +130,7 @@
     grid-template-columns: auto 1fr;
     align-items: center; 
     margin-left: 10px;
+    padding-top: 13px;
   
 }
 .cont-remen2{
@@ -140,14 +151,14 @@
       position: absolute;
       width: 600px;
       height: 690px;
-      margin-left: 860px;
+      margin-left: 800px;
       top: 110px;
   }
   .img-login3{
       position: absolute;
       width: auto;
       height: auto;
-      margin-left: 970px;
+      margin-left: 900px;
       top: 900px;
   }
 
@@ -158,7 +169,9 @@
       top: 850px;
   }
   
-
+.icon{
+    font-size: 17px !important;
+}
 
 
 

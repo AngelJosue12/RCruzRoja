@@ -1,49 +1,47 @@
 
 
 // Nav [a] Links  Data.......................
-export const navLinks =[
-    {
-        name:'Inicio',
-        icon:TiHome,
-        path:'/'
-    },
-    {
-        name:'Conocenos',
-        icon:IoMdContacts,
-        path:'/Conocenos'
-    },
-    {
-        name:'Servicios',
-        icon:MdMedicalServices,
-        path:'/servicios'
-    },
-    {
-      name:'Login',
-      icon:FaUserCircle,
-        path:'Login'
-    },
-    {
-      name:'Registro',
-      icon:FaRegAddressBook,
-        path:'Registro'
-    },
-    {
-        name:'Citas',
-        icon:IoCalendarNumberSharp,
-        path:'/citas'
-    },
-    {
-        name:'Donaciones',
-        icon:FaDonate,
-        path:'/donaciones'
-    },
-    {
-        name:'Contacto',
-        icon:FaPhoneFlip,
-        path:'/contacto'
-    },
-  ];
-  
+export const navLinks = [
+  {
+    name: 'Inicio',
+    icon: TiHome,
+    path: '/'
+  },
+  {
+    name: 'Conócenos',
+    icon: IoMdContacts,
+    path: '/conocenos'
+  },
+  {
+    name: 'Servicios',
+    icon: MdMedicalServices,
+    path: '/servicios'
+  },
+  {
+    name: 'Citas',
+    icon: IoCalendarNumberSharp,
+    path: '/citas'
+  },
+  {
+    name: 'Donaciones',
+    icon: FaDonate,
+    path: '/donaciones'
+  },
+ 
+];
+
+export const authLinks = [
+  {
+    name: 'Login',
+    icon: FaUserCircle,
+    path: '/login'
+  },
+  {
+    name: 'Registro',
+    icon: FaRegAddressBook,
+    path: '/registro'
+  }
+];
   
   
   
@@ -89,6 +87,7 @@ export const navLinks =[
           link: '*',
           name: ''
       },
+      
     ]
       
   };

@@ -14,11 +14,13 @@ header{
     justify-content: center;
     position: relative;
     padding: 0px 0;
+    margin-top: -150px;
 }
 .header-shape{
     position: absolute;
     top: 0;
     right: 0;
+    margin-top: 120px;
 }
 .header-wrapper{
     display: grid;
@@ -31,7 +33,8 @@ header{
 }
 .header-right{
     margin-left: -394PX;
-    width: 450px;
+    width: 400px;
+    margin-top: 150px;
 }
 .header-left p{
     margin-left: 5px;

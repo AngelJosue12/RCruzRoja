@@ -14,8 +14,6 @@ import {Pagination} from 'swiper/modules';
 
 import { featuredBooksData2 } from '../../Data/Data';
 
-import { BsArrowReturnRight } from "react-icons/bs";
-
 // swiper  Breakpoints
 const breakpoints= {
     1024:{
